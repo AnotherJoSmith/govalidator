@@ -1508,7 +1508,7 @@ func TestIsDialString(t *testing.T) {
 		{"localhost.localdomain.intern:65535", true},
 		{"127.0.0.1:30000", true},
 		{"[::1]:80", true},
-		{"[1200::AB00:1234::2552:7777:1313]:22",false},
+		{"[1200::AB00:1234::2552:7777:1313]:22", false},
 		{"-localhost:1", false},
 		{"localhost.-localdomain:9090", false},
 		{"localhost.localdomain.-int:65535", false},
@@ -2168,8 +2168,8 @@ func TestErrorByField(t *testing.T) {
 		{"message", ""},
 		{"Message", ""},
 		{"title", ""},
-		{"Title", "My123 does not validate as alpha"},
-		{"AuthorIP", "123 does not validate as ipv4"},
+		{"Title", "govalidator.error.alpha"},
+		{"AuthorIP", "govalidator.error.ipv4"},
 	}
 	post := &Post{"My123", "duck13126", "123"}
 	_, err := ValidateStruct(post)
@@ -2189,8 +2189,8 @@ func TestErrorsByField(t *testing.T) {
 		param    string
 		expected string
 	}{
-		{"Title", "My123 does not validate as alpha"},
-		{"AuthorIP", "123 does not validate as ipv4"},
+		{"Title", "govalidator.error.alpha"},
+		{"AuthorIP", "govalidator.error.ipv4"},
 	}
 	post := &Post{Title: "My123", Message: "duck13126", AuthorIP: "123"}
 	_, err := ValidateStruct(post)
@@ -2209,8 +2209,8 @@ func TestErrorsByField(t *testing.T) {
 		param    string
 		expected string
 	}{
-		{"Title", ";:;message;:; does not validate as length(1|10)"},
-		{"Body", ";:;message;:; does not validate as length(1|10)"},
+		{"Title", "govalidator.error.length(1|10)"},
+		{"Body", "govalidator.error.length(1|10)"},
 	}
 
 	message := &MessageWithSeveralFieldsStruct{Title: ";:;message;:;", Body: ";:;message;:;"}
@@ -2261,7 +2261,7 @@ func TestValidateStructPointers(t *testing.T) {
 		expected string
 	}{
 		{"Name", ""},
-		{"Email", "invalid does not validate as email"},
+		{"Email", "govalidator.error.email"},
 		{"FavoriteFood", ""},
 		{"Nerd", ""},
 	}

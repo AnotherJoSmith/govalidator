@@ -454,7 +454,7 @@ func IsISO3166Alpha3(str string) bool {
 
 // IsDNSName will validate the given string as a DNS name
 func IsDNSName(str string) bool {
-	if str == "" || len(strings.Replace(str,".","",-1)) > 255 {
+	if str == "" || len(strings.Replace(str, ".", "", -1)) > 255 {
 		// constraints already violated
 		return false
 	}
@@ -683,7 +683,7 @@ func typeCheck(v reflect.Value, t reflect.StructField) (bool, error) {
 		if validatefunc, ok := CustomTypeTagMap[tagOpt]; ok {
 			options = append(options[:i], options[i+1:]...) // we found our custom validator, so remove it from the options
 			if result := validatefunc(v.Interface()); !result {
-				return false, Error{t.Name, fmt.Errorf("%s does not validate as %s", fmt.Sprint(v), tagOpt)}
+				return false, Error{t.Name, fmt.Errorf(errorI18NKey(tagOpt, false))}
 			}
 			return true, nil
 		}
@@ -724,11 +724,7 @@ func typeCheck(v reflect.Value, t reflect.StructField) (bool, error) {
 							field := fmt.Sprint(v) // make value into string, then validate with regex
 							if result := validatefunc(field, ps[1:]...); !result && !negate || result && negate {
 								var err error
-								if !negate {
-									err = fmt.Errorf("%s does not validate as %s", field, tagOpt)
-								} else {
-									err = fmt.Errorf("%s does validate as %s", field, tagOpt)
-								}
+								err = fmt.Errorf(errorI18NKey(tagOpt, negate))
 								return false, Error{t.Name, err}
 							}
 						default:
@@ -746,11 +742,7 @@ func typeCheck(v reflect.Value, t reflect.StructField) (bool, error) {
 					field := fmt.Sprint(v) // make value into string, then validate with regex
 					if result := validatefunc(field); !result && !negate || result && negate {
 						var err error
-						if !negate {
-							err = fmt.Errorf("%s does not validate as %s", field, tagOpt)
-						} else {
-							err = fmt.Errorf("%s does validate as %s", field, tagOpt)
-						}
+						err = fmt.Errorf(errorI18NKey(tagOpt, negate))
 						return false, Error{t.Name, err}
 					}
 				default:
@@ -884,6 +876,13 @@ func ErrorsByField(e error) map[string]string {
 	}
 
 	return m
+}
+
+func errorI18NKey(key string, negate bool) string {
+	if negate {
+		return "govalidator.error.not." + key // For when validating a condition
+	}
+	return "govalidator.error." + key
 }
 
 // Error returns string equivalent for reflect.Type
