@@ -645,7 +645,7 @@ func (opts tagOptions) contains(optionName string) bool {
 
 func checkRequired(v reflect.Value, t reflect.StructField, options tagOptions) (bool, error) {
 	if options.contains("required") {
-		err := fmt.Errorf("non zero value required")
+		err := fmt.Errorf("govalidator.error.required")
 		return false, Error{t.Name, err}
 	} else if fieldsRequiredByDefault && !options.contains("optional") {
 		err := fmt.Errorf("All fields are required to at least have one validation defined")
